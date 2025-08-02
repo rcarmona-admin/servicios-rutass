@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Servicios - RUTA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            font-size: 13px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .controls {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 12px;
+        }
+
+        .control-group input, .control-group select, .control-group textarea {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .control-group textarea {
+            min-width: 180px;
+            max-width: 250px;
+            resize: vertical;
+        }
+
+        .control-group input:focus, .control-group select:focus, .control-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+            font-size: 12px;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-voice {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            box-shadow: 0 3px 10px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-voice.listening {
+            background: linear-gradient(45deg, #27ae60, #229954);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #95a5a6, #7f8c8d);
+            box-shadow: 0 3px 10px rgba(149, 165, 166, 0.3);
+        }
+
+        .voice-status {
+            background: #2c3e50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 10px 20px;
+            display: none;
+            text-align: center;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .voice-status.show {
+            display: block;
+        }
+
+        .voice-instructions {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 10px;
+            margin: 10px 20px;
+            border-radius: 6px;
+            font-size: 11px;
+            color: #2c3e50;
+        }
+
+        .content {
+            padding: 15px 20px;
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .stats {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 11px;
+            margin-top: 3px;
+        }
+
+        .date-section {
+            margin-bottom: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .date-header {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            padding: 12px 20px;
+            font-size: 1.1em;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .matricula-group {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .matricula-group:last-child {
+            border-bottom: none;
+        }
+
+        .matricula-header {
+            padding: 8px 15px;
+            font-weight: 700;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .matricula-header:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Colores para cada matrícula */
+        .matricula-0447MFM { background: linear-gradient(135deg, #ff6b6b20, #ff6b6b10); border-left: 4px solid #ff6b6b; }
+        .matricula-2267LMZM { background: linear-gradient(135deg, #4ecdc420, #4ecdc410); border-left: 4px solid #4ecdc4; }
+        .matricula-0750JXM { background: linear-gradient(135deg, #45b74920, #45b74910); border-left: 4px solid #45b749; }
+        .matricula-6771KBK { background: linear-gradient(135deg, #f9ca2420, #f9ca2410); border-left: 4px solid #f9ca24; }
+        .matricula-4606HGD { background: linear-gradient(135deg, #a55eea20, #a55eea10); border-left: 4px solid #a55eea; }
+        .matricula-9359GGD { background: linear-gradient(135deg, #fd7956020, #fd7956010); border-left: 4px solid #fd79560; }
+
+        .service-list {
+            padding: 0 15px 10px 15px;
+            display: none;
+        }
+
+        .service-list.expanded {
+            display: block;
+        }
+
+        .service-item {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-left: 3px solid #ddd;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            font-size: 12px;
+        }
+
+        .service-item:hover {
+            transform: translateX(3px);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-item.completed {
+            border-left-color: #27ae60;
+            background: linear-gradient(135deg, #f0fff4, #e8f5e8);
+        }
+
+        .service-item.pending {
+            border-left-color: #f39c12;
+            background: linear-gradient(135deg, #fffbf0, #fef5e8);
+        }
+
+        .service-item.editing {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-left-color: #2196f3;
+        }
+
+        .service-description {
+            margin-bottom: 8px;
+            line-height: 1.3;
+            color: #2c3e50;
+        }
+
+        .service-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+        }
+
+        .status-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-toggle input[type="checkbox"] {
+            transform: scale(1.1);
+            cursor: pointer;
+        }
+
+        .status-text {
+            font-weight: 600;
+            font-size: 11px;
+        }
+
+        .status-text.completed {
+            color: #27ae60;
+        }
+
+        .status-text.pending {
+            color: #f39c12;
+        }
+
+        .service-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-small {
+            padding: 4px 8px;
+            font-size: 10px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-save {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-cancel {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .edit-form {
+            display: none;
+            margin-top: 8px;
+            padding: 8px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+
+        .edit-form.show {
+            display: block;
+        }
+
+        .edit-form input, .edit-form textarea {
+            width: 100%;
+            padding: 6px;
+            margin-bottom: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        .no-services {
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+            padding: 30px;
+        }
+
+        .toggle-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-icon.expanded {
+            transform: rotate(90deg);
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            
+            .control-group {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+
+            .control-group input, .control-group select, .control-group textarea {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚛 Gestión de Servicios - RUTA</h1>
+            <p>Sistema compacto de seguimiento de servicios</p>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Matrícula:</label>
+                <select id="matricula">
+                    <option value="">Seleccionar</option>
+                    <option value="0447MFM">0447MFM</option>
+                    <option value="2267LMZM">2267LMZM</option>
+                    <option value="0750JXM">0750JXM</option>
+                    <option value="6771KBK">6771KBK</option>
+                    <option value="4606HGD">4606HGD</option>
+                    <option value="9359GGD">9359GGD</option>
+                </select>
+                <label>Fecha:</label>
+                <input type="date" id="fecha">
+                <label>Descripción:</label>
+                <textarea id="descripcion" placeholder="Descripción del servicio" rows="1"></textarea>
+                <button class="btn" onclick="agregarServicio()">➕ Agregar</button>
+                <button class="btn btn-voice" onclick="iniciarReconocimientoVoz()" id="btnVoz">🎤 Dictar</button>
+            </div>
+
+            <div class="control-group">
+                <label>Filtro matrícula:</label>
+                <select id="filtroMatricula" onchange="filtrarServicios()">
+                    <option value="">Todas</option>
+                    <option value="0447MFM">0447MFM</option>
+                    <option value="2267LMZM">2267LMZM</option>
+                    <option value="0750JXM">0750JXM</option>
+                    <option value="6771KBK">6771KBK</option>
+                    <option value="4606HGD">4606HGD</option>
+                    <option value="9359GGD">9359GGD</option>
+                </select>
+                <label>Estado:</label>
+                <select id="filtroEstado" onchange="filtrarServicios()">
+                    <option value="">Todos</option>
+                    <option value="completed">Completados</option>
+                    <option value="pending">Pendientes</option>
+                </select>
+                <button class="btn btn-secondary" onclick="limpiarFiltros()">🔄 Limpiar</button>
+            </div>
+        </div>
+
+        <div class="voice-status" id="voiceStatus"></div>
+
+        <div class="voice-instructions">
+            <strong>🎤 Comando de voz:</strong> 
+            Di: <em>"Matrícula [número] fecha [día mes año] descripción [tu descripción]"</em><br>
+            <strong>Ejemplo:</strong> "Matrícula 0447 fecha hoy descripción punto limpio torres"
+        </div>
+
+        <div class="content">
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number" id="totalServicios">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="completados">0</div>
+                    <div class="stat-label">Completados</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="pendientes">0</div>
+                    <div class="stat-label">Pendientes</div>
+                </div>
+            </div>
+
+            <div id="serviciosContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        let servicios = [
+            {
+                id: 1,
+                matricula: "0447MFM",
+                fecha: "2025-08-02",
+                descripcion: "Punto limpio torres colchones SOLAR",
+                completado: true
+            },
+            {
+                id: 2,
+                matricula: "0447MFM",
+                fecha: "2025-08-02",
+                descripcion: "Solar textil TRADEBE",
+                completado: true
+            },
+            {
+                id: 3,
+                matricula: "2267LMZM",
+                fecha: "2025-08-02",
+                descripcion: "Sortega madera LÓPEZ",
+                completado: false
+            },
+            {
+                id: 4,
+                matricula: "0750JXM",
+                fecha: "2025-08-03",
+                descripcion: "Punto limpio Villar Del Olmo poda CML",
+                completado: false
+            },
+            {
+                id: 5,
+                matricula: "6771KBK",
+                fecha: "2025-08-03",
+                descripcion: "Tomsa madera LÓPEZ",
+                completado: false
+            }
+        ];
+
+        let contadorId = 6;
+        let recognition;
+        let isListening = false;
+        let editingId = null;
+
+        // Inicializar reconocimiento de voz
+        function inicializarReconocimientoVoz() {
+            if ('webkitSpeechRecognition' in window) {
+                recognition = new webkitSpeechRecognition();
+            } else if ('SpeechRecognition' in window) {
+                recognition = new SpeechRecognition();
+            } else {
+                return false;
+            }
+
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'es-ES';
+            recognition.maxAlternatives = 1;
+
+            recognition.onstart = function() {
+                isListening = true;
+                const btnVoz = document.getElementById('btnVoz');
+                const voiceStatus = document.getElementById('voiceStatus');
+                
+                btnVoz.textContent = '🔴 Escuchando...';
+                btnVoz.classList.add('listening');
+                voiceStatus.textContent = '🎤 Escuchando... Habla ahora';
+                voiceStatus.classList.add('show');
+            };
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                procesarComandoVoz(transcript);
+            };
+
+            recognition.onerror = function(event) {
+                mostrarMensajeVoz('❌ Error: ' + event.error, 'error');
+                pararReconocimiento();
+            };
+
+            recognition.onend = function() {
+                pararReconocimiento();
+            };
+
+            return true;
+        }
+
+        function iniciarReconocimientoVoz() {
+            if (!recognition && !inicializarReconocimientoVoz()) {
+                alert('Tu navegador no soporta reconocimiento de voz. Usa Chrome o Safari.');
+                return;
+            }
+
+            if (isListening) {
+                recognition.stop();
+                return;
+            }
+
+            try {
+                recognition.start();
+            } catch (error) {
+                alert('Error al iniciar reconocimiento de voz: ' + error.message);
+            }
+        }
+
+        function pararReconocimiento() {
+            isListening = false;
+            const btnVoz = document.getElementById('btnVoz');
+            const voiceStatus = document.getElementById('voiceStatus');
+            
+            btnVoz.textContent = '🎤 Dictar';
+            btnVoz.classList.remove('listening');
+            
+            setTimeout(() => {
+                voiceStatus.classList.remove('show');
+            }, 3000);
+        }
+
+        function procesarComandoVoz(texto) {
+            mostrarMensajeVoz('📝 Procesando: "' + texto + '"');
+            
+            texto = texto.toLowerCase().trim();
+            
+            // Patrones para extraer información
+            const patronMatricula = /matrícula\s+(\w+)|matricula\s+(\w+)/i;
+            const patronFecha = /fecha\s+hoy|fecha\s+(\d{1,2})\s+(\w+)\s+(\d{4})|fecha\s+(\d{1,2})\/(\d{1,2})\/(\d{4})|fecha\s+(\d{4}-\d{2}-\d{2})/i;
+            const patronDescripcion = /descripción\s+(.+)|descripcion\s+(.+)/i;
+
+            let matricula = '';
+            let fecha = '';
+            let descripcion = '';
+
+            // Extraer matrícula
+            const matchMatricula = texto.match(patronMatricula);
+            if (matchMatricula) {
+                let matriculaVoz = (matchMatricula[1] || matchMatricula[2]).toUpperCase();
+                // Buscar coincidencia con las matrículas disponibles
+                const matriculas = ['0447MFM', '2267LMZM', '0750JXM', '6771KBK', '4606HGD', '9359GGD'];
+                const matriculaEncontrada = matriculas.find(m => 
+                    m.includes(matriculaVoz.substring(0, 4)) || matriculaVoz.includes(m.substring(0, 4))
+                );
+                if (matriculaEncontrada) {
+                    matricula = matriculaEncontrada;
+                } else {
+                    matricula = matriculaVoz;
+                }
+            }
+
+            // Extraer fecha
+            const matchFecha = texto.match(patronFecha);
+            if (matchFecha) {
+                if (matchFecha[0].includes('hoy')) {
+                    fecha = new Date().toISOString().split('T')[0];
+                } else if (matchFecha[6]) {
+                    fecha = matchFecha[6];
+                } else if (matchFecha[4] && matchFecha[5] && matchFecha[6]) {
+                    fecha = `${matchFecha[6]}-${matchFecha[5].padStart(2, '0')}-${matchFecha[4].padStart(2, '0')}`;
+                } else if (matchFecha[1] && matchFecha[2] && matchFecha[3]) {
+                    const meses = {
+                        'enero': '01', 'febrero': '02', 'marzo': '03', 'abril': '04',
+                        'mayo': '05', 'junio': '06', 'julio': '07', 'agosto': '08',
+                        'septiembre': '09', 'octubre': '10', 'noviembre': '11', 'diciembre': '12'
+                    };
+                    const mes = meses[matchFecha[2].toLowerCase()] || '01';
+                    fecha = `${matchFecha[3]}-${mes}-${matchFecha[1].padStart(2, '0')}`;
+                }
+            }
+
+            // Extraer descripción
+            const matchDescripcion = texto.match(patronDescripcion);
+            if (matchDescripcion) {
+                descripcion = (matchDescripcion[1] || matchDescripcion[2]).trim();
+            }
+
+            // Si no se encontró fecha, usar la actual
+            if (!fecha) {
+                fecha = new Date().toISOString().split('T')[0];
+            }
+
+            // Rellenar campos automáticamente
+            if (matricula) {
+                document.getElementById('matricula').value = matricula;
+            }
+            if (fecha) {
+                document.getElementById('fecha').value = fecha;
+            }
+            if (descripcion) {
+                document.getElementById('descripcion').value = descripcion;
+            }
+
+            // Agregar automáticamente si tenemos matrícula y descripción
+            if (matricula && descripcion) {
+                setTimeout(() => {
+                    agregarServicio();
+                    mostrarMensajeVoz('✅ Servicio agregado automáticamente', 'success');
+                }, 1000);
+            } else {
+                let mensaje = '⚠️ ';
+                if (!matricula) mensaje += 'Falta matrícula. ';
+                if (!descripcion) mensaje += 'Falta descripción. ';
+                mostrarMensajeVoz(mensaje + 'Completa los campos faltantes.', 'warning');
+            }
+        }
+
+        function mostrarMensajeVoz(mensaje, tipo = 'info') {
+            const voiceStatus = document.getElementById('voiceStatus');
+            voiceStatus.textContent = mensaje;
+            voiceStatus.classList.add('show');
+            
+            voiceStatus.style.background = tipo === 'success' ? '#27ae60' : 
+                                         tipo === 'error' ? '#e74c3c' : 
+                                         tipo === 'warning' ? '#f39c12' : '#2c3e50';
+        }
+
+        function agregarServicio() {
+            const matricula = document.getElementById('matricula').value;
+            const fecha = document.getElementById('fecha').value;
+            const descripcion = document.getElementById('descripcion').value;
+
+            if (!matricula || !fecha || !descripcion.trim()) {
+                alert('Por favor, completa todos los campos');
+                return;
+            }
+
+            const nuevoServicio = {
+                id: contadorId++,
+                matricula: matricula,
+                fecha: fecha,
+                descripcion: descripcion.trim(),
+                completado: false
+            };
+
+            servicios.push(nuevoServicio);
+            
+            // Limpiar formulario
+            document.getElementById('matricula').value = '';
+            document.getElementById('fecha').value = '';
+            document.getElementById('descripcion').value = '';
+
+            mostrarServicios();
+        }
+
+        function toggleEstado(id) {
+            const servicio = servicios.find(s => s.id === id);
+            if (servicio) {
+                servicio.completado = !servicio.completado;
+                mostrarServicios();
+            }
+        }
+
+        function eliminarServicio(id) {
+            if (confirm('¿Eliminar este servicio?')) {
+                servicios = servicios.filter(s => s.id !== id);
+                mostrarServicios();
+            }
+        }
+
+        function editarServicio(id) {
+            // Cancelar edición anterior si existe
+            if (editingId && editingId !== id) {
+                cancelarEdicion(editingId);
+            }
+            
+            editingId = id;
+            const servicio = servicios.find(s => s.id === id);
+            const serviceItem = document.querySelector(`[data-service-id="${id}"]`);
+            
+            serviceItem.classList.add('editing');
+            const editForm = serviceItem.querySelector('.edit-form');
+            editForm.classList.add('show');
+            
+            // Rellenar campos de edición
+            editForm.querySelector('.edit-matricula').value = servicio.matricula;
+            editForm.querySelector('.edit-fecha').value = servicio.fecha;
+            editForm.querySelector('.edit-descripcion').value = servicio.descripcion;
+        }
+
+        function guardarEdicion(id) {
+            const serviceItem = document.querySelector(`[data-service-id="${id}"]`);
+            const editForm = serviceItem.querySelector('.edit-form');
+            
+            const matricula = editForm.querySelector('.edit-matricula').value;
+            const fecha = editForm.querySelector('.edit-fecha').value;
+            const descripcion = editForm.querySelector('.edit-descripcion').value;
+
+            if (!matricula || !fecha || !descripcion.trim()) {
+                alert('Todos los campos son obligatorios');
+                return;
+            }
+
+            const servicio = servicios.find(s => s.id === id);
+            servicio.matricula = matricula;
+            servicio.fecha = fecha;
+            servicio.descripcion = descripcion.trim();
+
+            editingId = null;
+            mostrarServicios();
+        }
+
+        function cancelarEdicion(id) {
+            const serviceItem = document.querySelector(`[data-service-id="${id}"]`);
+            if (serviceItem) {
+                serviceItem.classList.remove('editing');
+                const editForm = serviceItem.querySelector('.edit-form');
+                editForm.classList.remove('show');
+            }
+            editingId = null;
+        }
+
+        function toggleMatricula(matricula, fecha) {
+            const container = document.getElementById(`services-${matricula}-${fecha}`);
+            const icon = document.getElementById(`toggle-${matricula}-${fecha}`);
+            
+            if (container.classList.contains('expanded')) {
+                container.classList.remove('expanded');
+                icon.classList.remove('expanded');
+            } else {
+                container.classList.add('expanded');
+                icon.classList.add('expanded');
+            }
+        }
+
+        function filtrarServicios() {
+            mostrarServicios();
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('filtroMatricula').value = '';
+            document.getElementById('filtroEstado').value = '';
+            mostrarServicios();
+        }
+
+        function mostrarServicios() {
+            const filtroMatricula = document.getElementById('filtroMatricula').value;
+            const filtroEstado = document.getElementById('filtroEstado').value;
+
+            let serviciosFiltrados = servicios;
+
+            if (filtroMatricula) {
+                serviciosFiltrados = serviciosFiltrados.filter(s => s.matricula === filtroMatricula);
+            }
+
+            if (filtroEstado) {
+                serviciosFiltrados = serviciosFiltrados.filter(s => 
+                    (filtroEstado === 'completed' && s.completado) ||
+                    (filtroEstado === 'pending' && !s.completado)
+                );
+            }
+
+            // Agrupar por fecha y luego por matrícula
+            const serviciosPorFecha = {};
+            serviciosFiltrados.forEach(servicio => {
+                if (!serviciosPorFecha[servicio.fecha]) {
+                    serviciosPorFecha[servicio.fecha] = {};
+                }
+                if (!serviciosPorFecha[servicio.fecha][servicio.matricula]) {
+                    serviciosPorFecha[servicio.fecha][servicio.matricula] = [];
+                }
+                serviciosPorFecha[servicio.fecha][servicio.matricula].push(servicio);
+            });
+
+            // Ordenar fechas
+            const fechasOrdenadas = Object.keys(serviciosPorFecha).sort().reverse();
+
+            const container = document.getElementById('serviciosContainer');
+            container.innerHTML = '';
+
+            if (fechasOrdenadas.length === 0) {
+                container.innerHTML = '<div class="no-services">No hay servicios que mostrar</div>';
+                actualizarEstadisticas();
+                return;
+            }
+
+            fechasOrdenadas.forEach(fecha => {
+                const fechaFormatada = new Date(fecha + 'T00:00:00').toLocaleDateString('es-ES', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                const matriculasEnFecha = serviciosPorFecha[fecha];
+                const totalDia = Object.values(matriculasEnFecha).flat().length;
+                const completadosDia = Object.values(matriculasEnFecha).flat().filter(s => s.completado).length;
+
+                const seccionFecha = document.createElement('div');
+                seccionFecha.className = 'date-section';
+                seccionFecha.innerHTML = `
+                    <div class="date-header">
+                        <span>${fechaFormatada.toUpperCase()}</span>
+                        <span>${completadosDia}/${totalDia} completados</span>
+                    </div>
+                    <div class="matriculas-container">
+                        ${Object.keys(matriculasEnFecha).sort().map(matricula => {
+                            const serviciosMatricula = matriculasEnFecha[matricula];
+                            const completadosMatricula = serviciosMatricula.filter(s => s.completado).length;
+                            
+                            return `
+                                <div class="matricula-group matricula-${matricula}">
+                                    <div class="matricula-header" onclick="toggleMatricula('${matricula}', '${fecha}')">
+                                        <span>
+                                            <strong>${matricula}</strong> 
+                                            (${completadosMatricula}/${serviciosMatricula.length})
+                                        </span>
+                                        <span class="toggle-icon" id="toggle-${matricula}-${fecha}">▶</span>
+                                    </div>
+                                    <div class="service-list expanded" id="services-${matricula}-${fecha}">
+                                        ${serviciosMatricula.map(servicio => `
+                                            <div class="service-item ${servicio.completado ? 'completed' : 'pending'}" 
+                                                 data-service-id="${servicio.id}">
+                                                <div class="service-description">${servicio.descripcion}</div>
+                                                <div class="service-controls">
+                                                    <div class="status-toggle">
+                                                        <input type="checkbox" ${servicio.completado ? 'checked' : ''} 
+                                                               onchange="toggleEstado(${servicio.id})">
+                                                        <span class="status-text ${servicio.completado ? 'completed' : 'pending'}">
+                                                            ${servicio.completado ? '✅ Hecho' : '⏳ Pendiente'}
+                                                        </span>
+                                                    </div>
+                                                    <div class="service-actions">
+                                                        <button class="btn-small btn-edit" onclick="editarServicio(${servicio.id})">✏️</button>
+                                                        <button class="btn-small btn-delete" onclick="eliminarServicio(${servicio.id})">🗑️</button>
+                                                    </div>
+                                                </div>
+                                                <div class="edit-form">
+                                                    <select class="edit-matricula">
+                                                        <option value="0447MFM" ${servicio.matricula === '0447MFM' ? 'selected' : ''}>0447MFM</option>
+                                                        <option value="2267LMZM" ${servicio.matricula === '2267LMZM' ? 'selected' : ''}>2267LMZM</option>
+                                                        <option value="0750JXM" ${servicio.matricula === '0750JXM' ? 'selected' : ''}>0750JXM</option>
+                                                        <option value="6771KBK" ${servicio.matricula === '6771KBK' ? 'selected' : ''}>6771KBK</option>
+                                                        <option value="4606HGD" ${servicio.matricula === '4606HGD' ? 'selected' : ''}>4606HGD</option>
+                                                        <option value="9359GGD" ${servicio.matricula === '9359GGD' ? 'selected' : ''}>9359GGD</option>
+                                                    </select>
+                                                    <input type="date" class="edit-fecha" value="${servicio.fecha}">
+                                                    <textarea class="edit-descripcion" rows="2">${servicio.descripcion}</textarea>
+                                                    <div style="display: flex; gap: 5px; margin-top: 5px;">
+                                                        <button class="btn-small btn-save" onclick="guardarEdicion(${servicio.id})">💾 Guardar</button>
+                                                        <button class="btn-small btn-cancel" onclick="cancelarEdicion(${servicio.id})">❌ Cancelar</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+                container.appendChild(seccionFecha);
+            });
+
+            actualizarEstadisticas();
+        }
+
+        function actualizarEstadisticas() {
+            const total = servicios.length;
+            const completados = servicios.filter(s => s.completado).length;
+            const pendientes = total - completados;
+
+            document.getElementById('totalServicios').textContent = total;
+            document.getElementById('completados').textContent = completados;
+            document.getElementById('pendientes').textContent = pendientes;
+        }
+
+        // Establecer fecha actual por defecto
+        document.getElementById('fecha').valueAsDate = new Date();
+
+        // Mostrar servicios iniciales
+        mostrarServicios();
