@@ -232,12 +232,13 @@
         }
 
         /* Colores para cada matrícula */
-        .matricula-0447MFM { background: linear-gradient(135deg, #ff6b6b20, #ff6b6b10); border-left: 4px solid #ff6b6b; }
-        .matricula-2267LMZM { background: linear-gradient(135deg, #4ecdc420, #4ecdc410); border-left: 4px solid #4ecdc4; }
-        .matricula-0750JXM { background: linear-gradient(135deg, #45b74920, #45b74910); border-left: 4px solid #45b749; }
         .matricula-6771KBK { background: linear-gradient(135deg, #f9ca2420, #f9ca2410); border-left: 4px solid #f9ca24; }
+        .matricula-0447MFM { background: linear-gradient(135deg, #ff6b6b20, #ff6b6b10); border-left: 4px solid #ff6b6b; }
+        .matricula-2267LMZ { background: linear-gradient(135deg, #4ecdc420, #4ecdc410); border-left: 4px solid #4ecdc4; }
+        .matricula-0750JXM { background: linear-gradient(135deg, #45b74920, #45b74910); border-left: 4px solid #45b749; }
         .matricula-4606HGD { background: linear-gradient(135deg, #a55eea20, #a55eea10); border-left: 4px solid #a55eea; }
-        .matricula-9359GGD { background: linear-gradient(135deg, #fd7956020, #fd7956010); border-left: 4px solid #fd79560; }
+        .matricula-3642HTP { background: linear-gradient(135deg, #fd7956020, #fd7956010); border-left: 4px solid #fd79560; }
+        .matricula-0481JST { background: linear-gradient(135deg, #26de8120, #26de8110); border-left: 4px solid #26de81; }
 
         .service-list {
             padding: 0 15px 10px 15px;
@@ -419,12 +420,13 @@
                 <label>Matrícula:</label>
                 <select id="matricula">
                     <option value="">Seleccionar</option>
-                    <option value="0447MFM">0447MFM</option>
-                    <option value="2267LMZM">2267LMZM</option>
-                    <option value="0750JXM">0750JXM</option>
                     <option value="6771KBK">6771KBK</option>
+                    <option value="0447MFM">0447MFM</option>
+                    <option value="2267LMZ">2267LMZ</option>
+                    <option value="0750JXM">0750JXM</option>
                     <option value="4606HGD">4606HGD</option>
-                    <option value="9359GGD">9359GGD</option>
+                    <option value="3642HTP">3642HTP</option>
+                    <option value="0481JST">0481JST</option>
                 </select>
                 <label>Fecha:</label>
                 <input type="date" id="fecha">
@@ -438,12 +440,13 @@
                 <label>Filtro matrícula:</label>
                 <select id="filtroMatricula" onchange="filtrarServicios()">
                     <option value="">Todas</option>
-                    <option value="0447MFM">0447MFM</option>
-                    <option value="2267LMZM">2267LMZM</option>
-                    <option value="0750JXM">0750JXM</option>
                     <option value="6771KBK">6771KBK</option>
+                    <option value="0447MFM">0447MFM</option>
+                    <option value="2267LMZ">2267LMZ</option>
+                    <option value="0750JXM">0750JXM</option>
                     <option value="4606HGD">4606HGD</option>
-                    <option value="9359GGD">9359GGD</option>
+                    <option value="3642HTP">3642HTP</option>
+                    <option value="0481JST">0481JST</option>
                 </select>
                 <label>Estado:</label>
                 <select id="filtroEstado" onchange="filtrarServicios()">
@@ -460,7 +463,7 @@
         <div class="voice-instructions">
             <strong>🎤 Comando de voz:</strong> 
             Di: <em>"Matrícula [número] fecha [día mes año] descripción [tu descripción]"</em><br>
-            <strong>Ejemplo:</strong> "Matrícula 0447 fecha hoy descripción punto limpio torres"
+            <strong>Ejemplo:</strong> "Matrícula 0447 fecha once de agosto de 2025 descripción punto limpio torres"
         </div>
 
         <div class="content">
@@ -485,6 +488,7 @@
 
     <script>
         let servicios = [
+            // Servicios anteriores
             {
                 id: 1,
                 matricula: "0447MFM",
@@ -501,7 +505,7 @@
             },
             {
                 id: 3,
-                matricula: "2267LMZM",
+                matricula: "2267LMZ",
                 fecha: "2025-08-02",
                 descripcion: "Sortega madera LÓPEZ",
                 completado: false
@@ -519,13 +523,165 @@
                 fecha: "2025-08-03",
                 descripcion: "Tomsa madera LÓPEZ",
                 completado: false
+            },
+            
+            // Lunes, 11 de agosto de 2025
+            // 0447MFM
+            {
+                id: 6,
+                matricula: "0447MFM",
+                fecha: "2025-08-11",
+                descripcion: "punto limpio torrejón basura cml",
+                completado: false
+            },
+            {
+                id: 7,
+                matricula: "0447MFM",
+                fecha: "2025-08-11",
+                descripcion: "FEDERICO FLORES CHATARRA SOLAR",
+                completado: false
+            },
+            {
+                id: 8,
+                matricula: "0447MFM",
+                fecha: "2025-08-11",
+                descripcion: "CONSTRUCCIONES ORTIZ CHATARRA NIETO",
+                completado: false
+            },
+            {
+                id: 9,
+                matricula: "0447MFM",
+                fecha: "2025-08-11",
+                descripcion: "SOLAR TEXTIL TRADEBE",
+                completado: false
+            },
+            
+            // 0750JXM
+            {
+                id: 10,
+                matricula: "0750JXM",
+                fecha: "2025-08-11",
+                descripcion: "CONSTRUCCIONES ORTIZ RETIRADA DEFINITIVA 2 CONT, LLAMAR ANTES DE LAS 12",
+                completado: false
+            },
+            
+            // 2267LMZ
+            {
+                id: 11,
+                matricula: "2267LMZ",
+                fecha: "2025-08-11",
+                descripcion: "NAVE CHATARRA NIETO",
+                completado: false
+            },
+            {
+                id: 12,
+                matricula: "2267LMZ",
+                fecha: "2025-08-11",
+                descripcion: "FERROVIAL TRES CANTOS CHATARRA SOLAR",
+                completado: false
+            },
+            {
+                id: 13,
+                matricula: "2267LMZ",
+                fecha: "2025-08-11",
+                descripcion: "SOLAR TEXTIL TRADEBE",
+                completado: false
+            },
+            {
+                id: 14,
+                matricula: "2267LMZ",
+                fecha: "2025-08-11",
+                descripcion: "RAIMA DEJAR CONTENEDOR 30M3 PARA MEZCLA",
+                completado: false
+            },
+            
+            // 4606HGD
+            {
+                id: 15,
+                matricula: "4606HGD",
+                fecha: "2025-08-11",
+                descripcion: "BASE UME CARTON",
+                completado: false
+            },
+            {
+                id: 16,
+                matricula: "4606HGD",
+                fecha: "2025-08-11",
+                descripcion: "BASE PUNTO LIMPIO PLASTICOS",
+                completado: false
+            },
+            
+            // 6771KBK
+            {
+                id: 17,
+                matricula: "6771KBK",
+                fecha: "2025-08-11",
+                descripcion: "cocina central envases contaminados pilas y fluorescentes",
+                completado: false
+            },
+            {
+                id: 18,
+                matricula: "6771KBK",
+                fecha: "2025-08-11",
+                descripcion: "ARYSE PENDIENTE",
+                completado: false
+            },
+            {
+                id: 19,
+                matricula: "6771KBK",
+                fecha: "2025-08-11",
+                descripcion: "PHARMA (ir antes de las 14.00h)",
+                completado: false
+            },
+            {
+                id: 20,
+                matricula: "6771KBK",
+                fecha: "2025-08-11",
+                descripcion: "NAVE PLASTICO SAICA",
+                completado: false
+            },
+            
+            // 0481JST (antes 9359GGD)
+            {
+                id: 21,
+                matricula: "0481JST",
+                fecha: "2025-08-11",
+                descripcion: "BASE",
+                completado: false
+            },
+            
+            // Martes, 12 de agosto de 2025
+            // 0750JXM
+            {
+                id: 22,
+                matricula: "0750JXM",
+                fecha: "2025-08-12",
+                descripcion: "PHERGAL CALLE HIERRO 79 DE 09.00 - 15.00H DEJAR CONTENEDOR PARA CHATARRA, LLAMAR A JOSE ANTONIO 661314514",
+                completado: false
+            },
+            {
+                id: 23,
+                matricula: "0750JXM",
+                fecha: "2025-08-12",
+                descripcion: "ILUNION ARCHIVO PODA LOPEZ",
+                completado: false
+            },
+            {
+                id: 24,
+                matricula: "0750JXM",
+                fecha: "2025-08-12",
+                descripcion: "ATISA DEJAR CONTENEDOR 6M3 PARA MEZCLA DE RESIDUOS",
+                completado: false
             }
         ];
 
-        let contadorId = 6;
+        let contadorId = 25;
         let recognition;
         let isListening = false;
         let editingId = null;
+
+        // Orden específico de matrículas
+        const ordenMatriculas = ['6771KBK', '0447MFM', '2267LMZ', '0750JXM', '4606HGD', '3642HTP', '0481JST'];
 
         // Inicializar reconocimiento de voz
         function inicializarReconocimientoVoz() {
@@ -608,7 +764,7 @@
             
             // Patrones para extraer información
             const patronMatricula = /matrícula\s+(\w+)|matricula\s+(\w+)/i;
-            const patronFecha = /fecha\s+hoy|fecha\s+(\d{1,2})\s+(\w+)\s+(\d{4})|fecha\s+(\d{1,2})\/(\d{1,2})\/(\d{4})|fecha\s+(\d{4}-\d{2}-\d{2})/i;
+            const patronFecha = /fecha\s+hoy|fecha\s+(\d{1,2})\s+(?:de\s+)?(\w+)\s+(?:de\s+)?(\d{4})|fecha\s+(\d{1,2})\/(\d{1,2})\/(\d{4})|fecha\s+(\d{4}-\d{2}-\d{2})|fecha\s+(\d{1,2})\s+(\d{1,2})\s+(\d{4})/i;
             const patronDescripcion = /descripción\s+(.+)|descripcion\s+(.+)/i;
 
             let matricula = '';
@@ -620,7 +776,7 @@
             if (matchMatricula) {
                 let matriculaVoz = (matchMatricula[1] || matchMatricula[2]).toUpperCase();
                 // Buscar coincidencia con las matrículas disponibles
-                const matriculas = ['0447MFM', '2267LMZM', '0750JXM', '6771KBK', '4606HGD', '9359GGD'];
+                const matriculas = ['6771KBK', '0447MFM', '2267LMZ', '0750JXM', '4606HGD', '3642HTP', '0481JST'];
                 const matriculaEncontrada = matriculas.find(m => 
                     m.includes(matriculaVoz.substring(0, 4)) || matriculaVoz.includes(m.substring(0, 4))
                 );
@@ -631,22 +787,29 @@
                 }
             }
 
-            // Extraer fecha
+            // Extraer fecha - MEJORADO
             const matchFecha = texto.match(patronFecha);
             if (matchFecha) {
                 if (matchFecha[0].includes('hoy')) {
                     fecha = new Date().toISOString().split('T')[0];
-                } else if (matchFecha[6]) {
-                    fecha = matchFecha[6];
+                } else if (matchFecha[7]) {
+                    // Formato directo YYYY-MM-DD
+                    fecha = matchFecha[7];
                 } else if (matchFecha[4] && matchFecha[5] && matchFecha[6]) {
+                    // Formato DD/MM/YYYY
                     fecha = `${matchFecha[6]}-${matchFecha[5].padStart(2, '0')}-${matchFecha[4].padStart(2, '0')}`;
+                } else if (matchFecha[8] && matchFecha[9] && matchFecha[10]) {
+                    // Formato DD MM YYYY
+                    fecha = `${matchFecha[10]}-${matchFecha[9].padStart(2, '0')}-${matchFecha[8].padStart(2, '0')}`;
                 } else if (matchFecha[1] && matchFecha[2] && matchFecha[3]) {
+                    // Formato DD de MES de YYYY o DD MES YYYY
                     const meses = {
                         'enero': '01', 'febrero': '02', 'marzo': '03', 'abril': '04',
                         'mayo': '05', 'junio': '06', 'julio': '07', 'agosto': '08',
                         'septiembre': '09', 'octubre': '10', 'noviembre': '11', 'diciembre': '12'
                     };
-                    const mes = meses[matchFecha[2].toLowerCase()] || '01';
+                    const mesNombre = matchFecha[2].toLowerCase();
+                    const mes = meses[mesNombre] || '01';
                     fecha = `${matchFecha[3]}-${mes}-${matchFecha[1].padStart(2, '0')}`;
                 }
             }
@@ -657,7 +820,7 @@
                 descripcion = (matchDescripcion[1] || matchDescripcion[2]).trim();
             }
 
-            // Si no se encontró fecha, usar la actual
+            // Si no se encontró fecha específica, usar la actual
             if (!fecha) {
                 fecha = new Date().toISOString().split('T')[0];
             }
@@ -883,8 +1046,12 @@
                     </div>
                 `;
 
-                // Ordenar matrículas
-                const matriculasOrdenadas = Object.keys(serviciosPorFecha[fecha]).sort();
+                // Ordenar matrículas según el orden específico
+                const matriculasOrdenadas = Object.keys(serviciosPorFecha[fecha]).sort((a, b) => {
+                    const indexA = ordenMatriculas.indexOf(a);
+                    const indexB = ordenMatriculas.indexOf(b);
+                    return indexA - indexB;
+                });
 
                 matriculasOrdenadas.forEach(matricula => {
                     const serviciosMatricula = serviciosPorFecha[fecha][matricula];
@@ -919,12 +1086,13 @@
                                     </div>
                                     <div class="edit-form">
                                         <select class="edit-matricula">
-                                            <option value="0447MFM">0447MFM</option>
-                                            <option value="2267LMZM">2267LMZM</option>
-                                            <option value="0750JXM">0750JXM</option>
                                             <option value="6771KBK">6771KBK</option>
+                                            <option value="0447MFM">0447MFM</option>
+                                            <option value="2267LMZ">2267LMZ</option>
+                                            <option value="0750JXM">0750JXM</option>
                                             <option value="4606HGD">4606HGD</option>
-                                            <option value="9359GGD">9359GGD</option>
+                                            <option value="3642HTP">3642HTP</option>
+                                            <option value="0481JST">0481JST</option>
                                         </select>
                                         <input type="date" class="edit-fecha" value="${servicio.fecha}">
                                         <textarea class="edit-descripcion" rows="2">${servicio.descripcion}</textarea>
