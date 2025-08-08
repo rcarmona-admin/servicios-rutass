@@ -825,4 +825,151 @@
                 serviciosFiltrados = serviciosFiltrados.filter(s => s.matricula === filtroMatricula);
             }
 
-            if
+            if (filtroEstado) {
+                if (filtroEstado === 'completed') {
+                    serviciosFiltrados = serviciosFiltrados.filter(s => s.completado);
+                } else if (filtroEstado === 'pending') {
+                    serviciosFiltrados = serviciosFiltrados.filter(s => !s.completado);
+                }
+            }
+
+            // Actualizar estadísticas
+            document.getElementById('totalServicios').textContent = servicios.length;
+            document.getElementById('completados').textContent = servicios.filter(s => s.completado).length;
+            document.getElementById('pendientes').textContent = servicios.filter(s => !s.completado).length;
+
+            // Agrupar por fecha
+            const serviciosPorFecha = {};
+            serviciosFiltrados.forEach(servicio => {
+                if (!serviciosPorFecha[servicio.fecha]) {
+                    serviciosPorFecha[servicio.fecha] = {};
+                }
+                if (!serviciosPorFecha[servicio.fecha][servicio.matricula]) {
+                    serviciosPorFecha[servicio.fecha][servicio.matricula] = [];
+                }
+                serviciosPorFecha[servicio.fecha][servicio.matricula].push(servicio);
+            });
+
+            // Generar HTML
+            const container = document.getElementById('serviciosContainer');
+            container.innerHTML = '';
+
+            if (Object.keys(serviciosPorFecha).length === 0) {
+                container.innerHTML = '<div class="no-services">No hay servicios que mostrar</div>';
+                return;
+            }
+
+            // Ordenar fechas de más reciente a más antigua
+            const fechasOrdenadas = Object.keys(serviciosPorFecha).sort((a, b) => new Date(b) - new Date(a));
+
+            fechasOrdenadas.forEach(fecha => {
+                const fechaFormateada = new Date(fecha).toLocaleDateString('es-ES', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+                const serviciosDelDia = Object.values(serviciosPorFecha[fecha]).flat();
+                const completadosDelDia = serviciosDelDia.filter(s => s.completado).length;
+                const totalDelDia = serviciosDelDia.length;
+
+                const dateSection = document.createElement('div');
+                dateSection.className = 'date-section';
+                dateSection.innerHTML = `
+                    <div class="date-header">
+                        <span>${fechaFormateada}</span>
+                        <span>${completadosDelDia}/${totalDelDia} completados</span>
+                    </div>
+                `;
+
+                // Ordenar matrículas
+                const matriculasOrdenadas = Object.keys(serviciosPorFecha[fecha]).sort();
+
+                matriculasOrdenadas.forEach(matricula => {
+                    const serviciosMatricula = serviciosPorFecha[fecha][matricula];
+                    const completadosMatricula = serviciosMatricula.filter(s => s.completado).length;
+                    
+                    const matriculaGroup = document.createElement('div');
+                    matriculaGroup.className = 'matricula-group';
+                    matriculaGroup.innerHTML = `
+                        <div class="matricula-header matricula-${matricula}" onclick="toggleMatricula('${matricula}', '${fecha}')">
+                            <span>
+                                🚛 ${matricula} 
+                                <small>(${completadosMatricula}/${serviciosMatricula.length})</small>
+                            </span>
+                            <span class="toggle-icon" id="toggle-${matricula}-${fecha}">▶</span>
+                        </div>
+                        <div class="service-list" id="services-${matricula}-${fecha}">
+                            ${serviciosMatricula.map(servicio => `
+                                <div class="service-item ${servicio.completado ? 'completed' : 'pending'}" data-service-id="${servicio.id}">
+                                    <div class="service-description">${servicio.descripcion}</div>
+                                    <div class="service-controls">
+                                        <div class="status-toggle">
+                                            <input type="checkbox" ${servicio.completado ? 'checked' : ''} 
+                                                   onchange="toggleEstado(${servicio.id})">
+                                            <span class="status-text ${servicio.completado ? 'completed' : 'pending'}">
+                                                ${servicio.completado ? '✅ Completado' : '⏳ Pendiente'}
+                                            </span>
+                                        </div>
+                                        <div class="service-actions">
+                                            <button class="btn-small btn-edit" onclick="editarServicio(${servicio.id})">✏️</button>
+                                            <button class="btn-small btn-delete" onclick="eliminarServicio(${servicio.id})">🗑️</button>
+                                        </div>
+                                    </div>
+                                    <div class="edit-form">
+                                        <select class="edit-matricula">
+                                            <option value="0447MFM">0447MFM</option>
+                                            <option value="2267LMZM">2267LMZM</option>
+                                            <option value="0750JXM">0750JXM</option>
+                                            <option value="6771KBK">6771KBK</option>
+                                            <option value="4606HGD">4606HGD</option>
+                                            <option value="9359GGD">9359GGD</option>
+                                        </select>
+                                        <input type="date" class="edit-fecha" value="${servicio.fecha}">
+                                        <textarea class="edit-descripcion" rows="2">${servicio.descripcion}</textarea>
+                                        <div style="display: flex; gap: 5px; justify-content: flex-end;">
+                                            <button class="btn-small btn-save" onclick="guardarEdicion(${servicio.id})">💾 Guardar</button>
+                                            <button class="btn-small btn-cancel" onclick="cancelarEdicion(${servicio.id})">❌ Cancelar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    
+                    dateSection.appendChild(matriculaGroup);
+                });
+
+                container.appendChild(dateSection);
+            });
+        }
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            // Establecer fecha actual por defecto
+            document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+            
+            // Mostrar servicios iniciales
+            mostrarServicios();
+            
+            // Inicializar reconocimiento de voz
+            inicializarReconocimientoVoz();
+        });
+
+        // Atajos de teclado
+        document.addEventListener('keydown', function(e) {
+            // Ctrl + Enter para agregar servicio
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                agregarServicio();
+            }
+            
+            // Escape para cancelar edición
+            if (e.key === 'Escape' && editingId) {
+                cancelarEdicion(editingId);
+            }
+        });
+    </script>
+</body>
+</html>
